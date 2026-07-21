@@ -1,1 +1,226 @@
 @import "tailwindcss";
+
+/* =============================================================================
+   Recomenda — design tokens (Tailwind v4, CSS-first @theme)
+   Primary: #22663a (green) · Secondary: #ba5f35 (clay/terracotta)
+   ========================================================================== */
+@theme {
+  /* Brand — green scale (primary = 700) */
+  --color-brand-50: #eff8f2;
+  --color-brand-100: #dcefe3;
+  --color-brand-200: #b8dcc6;
+  --color-brand-300: #86c39f;
+  --color-brand-400: #57ac79;
+  --color-brand-500: #369560;
+  --color-brand-600: #2c7a48;
+  --color-brand-700: #22663a; /* primary */
+  --color-brand-800: #1a4f2d;
+  --color-brand-900: #163f25;
+  --color-brand-950: #0b2415;
+
+  /* Secondary — clay / terracotta scale (secondary = 500) */
+  --color-clay-50: #fbf3ee;
+  --color-clay-100: #f6e3d8;
+  --color-clay-200: #eec6b1;
+  --color-clay-300: #e2a184;
+  --color-clay-400: #d17e59;
+  --color-clay-500: #ba5f35; /* secondary */
+  --color-clay-600: #9d4e2c;
+  --color-clay-700: #7f3f26;
+  --color-clay-800: #683421;
+  --color-clay-900: #562d1e;
+  --color-clay-950: #2f1510;
+
+  /* Neutrals — warm, earthy */
+  --color-cream: #f7f4ec;
+  --color-surface: #fffdf8;
+  --color-sand: #efe8da;
+  --color-line: #e6ddcd;
+  --color-ink: #16241b;
+  --color-muted: #59685e;
+  --color-night: #0d2015;
+
+  /* Semantic single-value aliases */
+  --color-brand: #22663a;
+  --color-clay: #ba5f35;
+
+  /* Typography (wired to next/font CSS variables set on <html>) */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Soft, earthy elevation */
+  --shadow-soft: 0 1px 2px rgba(13, 32, 21, 0.04),
+    0 10px 30px -14px rgba(13, 32, 21, 0.16);
+  --shadow-lift: 0 2px 4px rgba(13, 32, 21, 0.05),
+    0 30px 60px -26px rgba(13, 32, 21, 0.32);
+
+  /* Motion */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii */
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.75rem;
+}
+
+/* =============================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  /* Tailwind v4 defaults `border` to currentColor — restore a sane hairline. */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-700);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* Offset in-page anchors for the sticky header */
+  section[id],
+  [data-anchor] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* =============================================================================
+   Utilities & decorative surfaces
+   ========================================================================== */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+
+  /* Warm mesh used behind the hero and CTA areas */
+  .bg-hero-mesh {
+    background-color: var(--color-cream);
+    background-image: radial-gradient(
+        62% 55% at 12% 6%,
+        color-mix(in oklab, var(--color-brand-300) 42%, transparent),
+        transparent 68%
+      ),
+      radial-gradient(
+        48% 46% at 96% 2%,
+        color-mix(in oklab, var(--color-clay-300) 40%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        70% 65% at 84% 96%,
+        color-mix(in oklab, var(--color-brand-200) 55%, transparent),
+        transparent 70%
+      );
+  }
+
+  /* Faint "field rows" — evokes plot lines / a map */
+  .bg-rows {
+    background-image: repeating-linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-brand-800) 5%, transparent) 0 1px,
+      transparent 1px 3.25rem
+    );
+  }
+
+  .bg-rows-dark {
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0 1px,
+      transparent 1px 3.25rem
+    );
+  }
+
+  /* Tactile film grain (SVG turbulence, no external asset) */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Scroll-reveal — gated on `.js` so no-JS visitors always see content */
+  [data-reveal] {
+    transition: opacity 0.7s var(--ease-brand), transform 0.7s var(--ease-brand);
+  }
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    will-change: opacity, transform;
+  }
+  [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+    [data-reveal] {
+      transition: none;
+    }
+  }
+
+  /* FAQ disclosure marker (native <details>, no JS) */
+  .faq-icon {
+    transition: transform 0.25s var(--ease-brand);
+  }
+  details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  /* Gentle idle float for the hero mock */
+  @keyframes float-soft {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .animate-float {
+    animation: float-soft 7s var(--ease-brand) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float {
+      animation: none;
+    }
+  }
+}
